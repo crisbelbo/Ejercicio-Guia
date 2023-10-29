@@ -7,6 +7,7 @@ using System.Windows.Forms;
 
 namespace CLIENTE_EJERCICIO_GUIA
 {
+    
     public partial class Form1 : Form
     {
         Socket server;
@@ -68,36 +69,17 @@ namespace CLIENTE_EJERCICIO_GUIA
                 byte[] msg2 = new byte[80];
                 server.Receive(msg2);
                 mensaje = Encoding.ASCII.GetString(msg2).Split('\0')[0];
-                MessageBox.Show(mensaje);
+                if(mensaje=="Eres alto")
+                {
+                    MessageBox.Show("Eres alto");
+                }
+                else
+                {
+                    MessageBox.Show("Eres un Hobbit");
+                }
+                
             }
-            else if (radioButton4.Checked)
-            {
-                string mensaje = "4/" + textBox1.Text;
-
-                // Enviamos al servidor el nombre
-                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
-                server.Send(msg);
-
-                //Recibimos la respuesta del servidor
-                byte[] msg2 = new byte[80];
-                server.Receive(msg2);
-                mensaje = Encoding.ASCII.GetString(msg2).Split('\0')[0];
-                MessageBox.Show(mensaje);
-            }
-            else if (radioButton5.Checked)
-            {
-                string mensaje = "5/" + textBox1.Text;
-
-                // Enviamos al servidor el nombre
-                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
-                server.Send(msg);
-
-                //Recibimos la respuesta del servidor
-                byte[] msg2 = new byte[80];
-                server.Receive(msg2);
-                mensaje = Encoding.ASCII.GetString(msg2).Split('\0')[0];
-                MessageBox.Show(mensaje);
-            }
+            
         }
         private void radioButton1_CheckedChanged(object sender, EventArgs e) //Botón Consulta 1
         {
@@ -118,17 +100,19 @@ namespace CLIENTE_EJERCICIO_GUIA
         {
             //Creamos un IDEndPoint con el IP y puerto del servidor
             IPAddress direc = IPAddress.Parse("192.168.56.102");
-            IPEndPoint ipep = new IPEndPoint(direc, 9070);
+            IPEndPoint ipep = new IPEndPoint(direc, 9090);
 
             //Creamos el socket
             server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             try
             {
+                this.BackColor=Color.Green;
                 server.Connect(ipep); //Intentamos conectar el socket
                 MessageBox.Show("Conectado");
             }
             catch (SocketException exc)
             {
+                this.BackColor = Color.Red;
                 MessageBox.Show("No se ha podido conectar con el servidor");
                 return;
             }
@@ -139,6 +123,7 @@ namespace CLIENTE_EJERCICIO_GUIA
             string mensaje= "0/";
             byte [] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
             server.Send(msg);
+            this.BackColor = Color.Gray;
             //Cerramos la conexión
             server.Shutdown(SocketShutdown.Both);
             server.Close();
@@ -147,6 +132,19 @@ namespace CLIENTE_EJERCICIO_GUIA
         private void radioButton4_CheckedChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            //Pedir numero de servicios realizados
+            string mensaje = "6/";
+            byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+            server.Send(msg);
+            //Recibimos la respuesta del servidor
+            byte[] msg2 = new byte[80];
+            server.Receive(msg2);
+            mensaje = Encoding.ASCII.GetString(msg2).Split('\0')[0];
+            label4.Text=mensaje;
         }
     }
 }
